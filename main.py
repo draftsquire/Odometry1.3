@@ -1,6 +1,8 @@
+import math
+
 import numpy as np
+import statistics
 from math import cos, sin, pi
-import matplotlib.pyplot as plt
 
 
 def data_reader():
@@ -16,29 +18,20 @@ def data_reader():
 
 
 def distance_counter(M, N, a, h, K, odometry_data):
-    # длина/ширина зоны обзора
-    b = 2 * h / cos(a / 2)
-    print("длина/ширина зоны обзора: ", b)
-
-    image = np.zeros(shape=(M, N))
+    b = h * math.tan(a / 2) * K / (N * 0.5)
     data_old = odometry_data[0:M]
-    offset = 0
+    offset = []
     for i in range(2, K + 1):
         data = odometry_data[(i - 1) * M:i * M]
-        print(i)
         for j in range(M - 1, 1, -1):
             if (data[j] == data_old[M - 1]).all() and (data[j - 1] == data_old[M - 2]).all():  ## this shit
-                offset = M - j - 1
-                print(data[j])
+                offset.append(M - j - 1)
+                print(M - j - 1)
             else:
                 continue
             break
-        plt.imshow(data)
-        plt.show()
         data_old = data
-        print("offset = " + str(offset))
-    plt.gray()
-
+    print(round(max(offset) * b, 2))
     return 0
 
 
